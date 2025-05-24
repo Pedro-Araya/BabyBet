@@ -53,6 +53,16 @@
       padding: 0.6rem; border-radius: 6px;
       border: 1px solid var(--borda); width: 100%;
     }
+    #loadingScreen {
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white; color: #333;
+      z-index: 9999;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      text-align: center; padding: 2rem;
+    }
     @media (max-width: 768px) {
       section { flex-direction: column; }
       .foto-lateral, .overlay { flex: 1 1 100%; }
@@ -99,19 +109,19 @@
       <div class="names-grid">
         <div>
           <h3>Nomes Masculinos</h3>
-          <div class="name-group"><span>Arthur</span><input type="number" name="arthur" value="0"></div>
-          <div class="name-group"><span>Esdras</span><input type="number" name="esdras" value="0"></div>
-          <div class="name-group"><span>Estevão</span><input type="number" name="estevao" value="0"></div>
-          <div class="name-group"><span>Levi</span><input type="number" name="levi" value="0"></div>
-          <div class="name-group"><span>Timóteo</span><input type="number" name="timoteo" value="0"></div>
+          <div class="name-group"><span>Arthur</span><input type="number" name="arthur" value="0" min="0"></div>
+          <div class="name-group"><span>Esdras</span><input type="number" name="esdras" value="0" min="0"></div>
+          <div class="name-group"><span>Estevão</span><input type="number" name="estevao" value="0" min="0"></div>
+          <div class="name-group"><span>Levi</span><input type="number" name="levi" value="0" min="0"></div>
+          <div class="name-group"><span>Timóteo</span><input type="number" name="timoteo" value="0" min="0"></div>
         </div>
         <div>
           <h3>Nomes Femininos</h3>
-          <div class="name-group"><span>Beatriz</span><input type="number" name="beatriz" value="0"></div>
-          <div class="name-group"><span>Débora</span><input type="number" name="debora" value="0"></div>
-          <div class="name-group"><span>Ester</span><input type="number" name="ester" value="0"></div>
-          <div class="name-group"><span>Lídia</span><input type="number" name="lidia" value="0"></div>
-          <div class="name-group"><span>Lívia</span><input type="number" name="livia" value="0"></div>
+          <div class="name-group"><span>Beatriz</span><input type="number" name="beatriz" value="0" min="0"></div>
+          <div class="name-group"><span>Débora</span><input type="number" name="debora" value="0" min="0"></div>
+          <div class="name-group"><span>Ester</span><input type="number" name="ester" value="0" min="0"></div>
+          <div class="name-group"><span>Lídia</span><input type="number" name="lidia" value="0" min="0"></div>
+          <div class="name-group"><span>Lívia</span><input type="number" name="livia" value="0" min="0"></div>
         </div>
       </div>
       <p>Total: R$<span id="totalDisplay">0</span></p>
@@ -122,13 +132,16 @@
       <div class="submit">
         <button type="submit">Enviar Palpite</button>
       </div>
-      <p id="statusMsg"></p>
     </form>
   </div>
 </section>
 
+<div id="loadingScreen">
+  <h2 id="loadingMessage">Estamos processando seu palpite...</h2>
+</div>
+
 <script>
-const scriptURL = 'https://script.google.com/macros/s/AKfycbw-P_GxQchtwa2wqM6i3cJWtTAYSqlxgsyP6iPYlr_v3uNdLlX2_J3NUUxoleP4O39E/exec'; // coloque seu URL de script aqui
+const scriptURL = 'https://script.google.com/macros/s/AKfycbw-P_GxQchtwa2wqM6i3cJWtTAYSqlxgsyP6iPYlr_v3uNdLlX2_J3NUUxoleP4O39E/exec';
 const form = document.getElementById('babyForm');
 const totalDisplay = document.getElementById('totalDisplay');
 const totalInput = document.getElementById('totalInput');
@@ -144,9 +157,18 @@ form.addEventListener('input', () => {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+
   const fileInput = document.getElementById('comprovante');
   const file = fileInput.files[0];
   if (!file) return alert("Selecione um comprovante.");
+
+  document.getElementById('formSection').style.display = 'none';
+  const loadingScreen = document.getElementById('loadingScreen');
+  const loadingMessage = document.getElementById('loadingMessage');
+  loadingMessage.textContent = "Estamos processando seu palpite...";
+  loadingScreen.style.background = "white";
+  loadingScreen.style.color = "#333";
+  loadingScreen.style.display = 'flex';
 
   const reader = new FileReader();
   reader.onloadend = async () => {
@@ -156,11 +178,19 @@ form.addEventListener('submit', async (e) => {
     formData.append('comprovanteNome', file.name);
     try {
       const res = await fetch(scriptURL, { method: 'POST', body: formData });
-      const text = await res.text();
-      document.getElementById('statusMsg').textContent = text;
-      if (text === 'OK') form.reset();
+      const json = await res.json();
+      if (json.success) {
+        loadingScreen.style.background = "#d4edda";
+        loadingMessage.textContent = "✅ Palpite submetido com sucesso!";
+        loadingScreen.style.color = "#155724";
+        form.reset();
+      } else {
+        throw new Error("Erro na resposta");
+      }
     } catch (err) {
-      document.getElementById('statusMsg').textContent = 'Erro ao enviar.';
+      loadingScreen.style.background = "#f8d7da";
+      loadingMessage.textContent = "❌ Ocorreu um erro ao enviar seu palpite.";
+      loadingScreen.style.color = "#721c24";
     }
   };
   reader.readAsDataURL(file);
