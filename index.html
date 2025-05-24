@@ -94,34 +94,40 @@
     <form id="babyForm" class="formulario">
       <label>Nome:</label>
       <input type="text" name="nome" required placeholder="Digite seu nome completo">
+    
       <label>WhatsApp:</label>
       <input type="text" name="whatsapp" required placeholder="Exemplo: (99) 99999-9999">
+    
       <div class="names-grid">
         <div>
           <h3>Nomes Masculinos</h3>
-          <div class="name-group"><span>Arthur</span><input type="number" name="arthur" value="0"></div>
-          <div class="name-group"><span>Esdras</span><input type="number" name="esdras" value="0"></div>
-          <div class="name-group"><span>Estevão</span><input type="number" name="estevao" value="0"></div>
-          <div class="name-group"><span>Levi</span><input type="number" name="levi" value="0"></div>
-          <div class="name-group"><span>Timóteo</span><input type="number" name="timoteo" value="0"></div>
+          <div class="name-group"><span>Arthur</span><input type="number" name="arthur" value="0" min="0"></div>
+          <div class="name-group"><span>Esdras</span><input type="number" name="esdras" value="0" min="0"></div>
+          <div class="name-group"><span>Estevão</span><input type="number" name="estevao" value="0" min="0"></div>
+          <div class="name-group"><span>Levi</span><input type="number" name="levi" value="0" min="0"></div>
+          <div class="name-group"><span>Timóteo</span><input type="number" name="timoteo" value="0" min="0"></div>
         </div>
         <div>
           <h3>Nomes Femininos</h3>
-          <div class="name-group"><span>Beatriz</span><input type="number" name="beatriz" value="0"></div>
-          <div class="name-group"><span>Débora</span><input type="number" name="debora" value="0"></div>
-          <div class="name-group"><span>Ester</span><input type="number" name="ester" value="0"></div>
-          <div class="name-group"><span>Lídia</span><input type="number" name="lidia" value="0"></div>
-          <div class="name-group"><span>Lívia</span><input type="number" name="livia" value="0"></div>
+          <div class="name-group"><span>Beatriz</span><input type="number" name="beatriz" value="0" min="0"></div>
+          <div class="name-group"><span>Débora</span><input type="number" name="debora" value="0" min="0"></div>
+          <div class="name-group"><span>Ester</span><input type="number" name="ester" value="0" min="0"></div>
+          <div class="name-group"><span>Lídia</span><input type="number" name="lidia" value="0" min="0"></div>
+          <div class="name-group"><span>Lívia</span><input type="number" name="livia" value="0" min="0"></div>
         </div>
       </div>
+    
       <p>Total: R$<span id="totalDisplay">0</span></p>
       <input type="hidden" name="total" id="totalInput">
+    
       <label>Pix para pagamento: (61)98286-7449</label>
       <label>Comprovante:</label>
       <input type="file" id="comprovante" accept="image/*" required>
+    
       <div class="submit">
         <button type="submit">Enviar Palpite</button>
       </div>
+    
       <p id="statusMsg"></p>
     </form>
   </div>
